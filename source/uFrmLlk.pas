@@ -11,43 +11,31 @@ uses
 type
   TFrmLlk = class(TForm)
     BtnPlay: TButton;
-    BtnAnalyse: TButton;
     PnlMain: TPanel;
     Image1: TImage;
     PnlTop: TPanel;
-    BtnMatch: TButton;
     BtnSnap: TButton;
     LblMatch: TLabel;
     TimerMatch: TTimer;
     TimerCheckGame: TTimer;
-    Button1: TButton;
     procedure BtnPlayClick(Sender: TObject);
-    procedure BtnAnalyseClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure BtnSnapClick(Sender: TObject);
-    procedure BtnMatchClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
     procedure TimerCheckGameTimer(Sender: TObject);
     procedure TimerMatchTimer(Sender: TObject);
   private
     { Private declarations }
     FBitmap: TBitmap;
-    FBmpTile: TBitmap;
     FCanvas: TCanvas;
     FTileTable: TTileTable;
-    FArrayTile: array[0..44] of Integer;
     FProcHandle: THandle;
 
-    function BmpToFlag(vBmp: TBitmap): Integer;
-    procedure CatchGameImage();
-    function CheckTileFlag(uFlag: Integer; var no: Boolean): Integer;
-    procedure GetGameData(vBmp: TBitmap; bSave: Boolean = False);
+    procedure GetGameData();
     function GetGameHandle(): THandle;
     function GetImgId(vRow, vCol: Integer): Integer;
     function CheckPath(Start, Target: TTile): Boolean;
     function FindTarget(vStart: TTile; var vTarget: TTile): Boolean;
-    procedure InitTiles();
     function Match(): Integer;
     function GetTileToColor(vTarget: TTile): TColor;
 
@@ -63,66 +51,10 @@ implementation
 
 {$R *.dfm}
 
-function TFrmLlk.BmpToFlag(vBmp: TBitmap): Integer;
-var
-  vP: PByteArray;
-  x, y, z: Integer;
-begin
-  z := 0;
-  vBmp.PixelFormat := pf24bit;
-  for y := 14 to vBmp.Height - 15 - 1 do
-  begin
-    vP := vBmp.ScanLine[y];
-    for x := 12 to vBmp.Width - 13 - 1 do
-    begin
-      z := z + vP[x * 3] + vP[x * 3 + 1]  + vP[x * 3 + 2];
-    end;
-  end;
-  Result := z;
-end;
-
 procedure TFrmLlk.BtnPlayClick(Sender: TObject);
 begin
-  CatchGameImage();
+  GetGameData();
   LblMatch.Caption := 'LLK Match = ' + IntToStr( Match() );
-end;
-
-procedure TFrmLlk.BtnAnalyseClick(Sender: TObject);
-var
-  vBmp: TBitmap;
-begin
-  vBmp := TBitmap.Create;
-  vBmp.LoadFromFile('c:\llk02.bmp');
-  GetGameData(vBmp, True);
-  vBmp.Free;
-end;
-
-procedure TFrmLlk.BtnMatchClick(Sender: TObject);
-var
-  vBmp: TBitmap;
-  vList, vList2: TStringList;
-  i: Integer;
-begin
-  vBmp := TBitmap.Create(LLK_TILE_WIDTH, LLK_TILE_HEIGHT);
-  vList := TStringList.Create;
-  vList2 := TStringList.Create;
-  vBmp.LoadFromFile('icon/flag.bmp');
-  vList.Add(Format('LLK_FLAG_START = %d;', [BmpToFlag(vBmp)]));
-  vList2.Add(IntToStr(BmpToFlag(vBmp)));
-  for i := 0 to 44 do
-  begin
-    vBmp.LoadFromFile(Format('icon/%0.2d.bmp', [i]));
-    vList.Add( Format('LLK_TILE_%0.2d = %d;', [i, BmpToFlag(vBmp)]) );
-    vList2.Add(IntToStr(BmpToFlag(vBmp)));
-  end;
-
-  vList2.Sort;
-  vList.AddStrings(vList2);
-  vList.SaveToFile('c:/list.txt');
-
-  vList.Free;
-  vList2.Free;
-  vBmp.Free;
 end;
 
 procedure TFrmLlk.BtnSnapClick(Sender: TObject);
@@ -161,41 +93,26 @@ begin
   end;
 end;
 
-procedure TFrmLlk.Button1Click(Sender: TObject);
-begin
-  GetTiles(FProcHandle, FTileTable);
-end;
-
-procedure TFrmLlk.CatchGameImage;
+procedure TFrmLlk.GetGameData;
 var
   hWnd: Winapi.Windows.HWND;
   hDc: Winapi.Windows.HDC;
-  vRect: TRect;
+//  vRect: TRect;
 begin
   hWnd := GetGameHandle();
-  if (hWnd = 0) then
+  if (hWnd = 0) or (FProcHandle = 0) or (not IsWindow(hWnd))  then
     Exit;
   hDc := GetDC(hWnd);
   try
     FCanvas.Handle := hDc;
 
-    GetWindowRect(hWnd, vRect);
-    FBmpTile.Canvas.CopyRect(Rect(0, 0, LLK_TILE_WIDTH, LLK_TILE_HEIGHT), FCanvas, Rect(18, 565, 18 + LLK_TILE_WIDTH, 565 + LLK_TILE_HEIGHT));
-    if BmpToFlag(FBmpTile) <> LLK_FLAG_START then
-    begin
-      Caption := 'LLK (未开始)';
-      Exit;
-    end;
-    Caption := 'LLK (游戏中)';
-
+//    GetWindowRect(hWnd, vRect);
     FBitmap.Canvas.CopyRect(Rect(0, 0, LLK_MAIN_WIDTH, LLK_MAIN_HEIGHT), FCanvas, Rect(LLK_MAIN_LEFT, LLK_MAIN_TOP, LLK_MAIN_LEFT + LLK_MAIN_WIDTH, LLK_MAIN_TOP + LLK_MAIN_HEIGHT));
-
-    // FBitmap.SaveToFile('c:/' + FormatDateTime('/hhnnss', now) + '.bmp');
-
-    GetGameData(FBitmap);
+    Image1.Picture.Bitmap := FBitmap;
   finally
     ReleaseDC(hWnd, hDc);
   end;
+  GetTiles(FProcHandle, FTileTable);
 end;
 
 function TFrmLlk.FindTarget(vStart: TTile; var vTarget: TTile): Boolean;
@@ -230,64 +147,13 @@ begin
   FBitmap.Canvas.Pen.Width := 2;
   FBitmap.Canvas.Brush.Color := clWhite;
   FBitmap.Canvas.Brush.Style := bsBDiagonal;
-
-  FBmpTile := TBitmap.Create(LLK_TILE_WIDTH, LLK_TILE_HEIGHT);
-
-  InitTiles;
 end;
 
 procedure TFrmLlk.FormDestroy(Sender: TObject);
 begin
   FBitmap.Free;
-  FBmpTile.Free;
   FCanvas.Free;
   CloseHandle(FProcHandle);
-end;
-
-procedure TFrmLlk.GetGameData(vBmp: TBitmap; bSave: Boolean = False);
-var
-  x, y, uFlag: Integer;
-  vRect: TRect;
-  vList: TStringList;
-  no: Boolean;
-begin
-  vList := nil;
-  try
-    if bSave then
-      vList := TStringList.Create;
-    for x := 0 to LLK_TILE_ROW - 1 do
-    begin
-      for y := 0 to LLK_TILE_COL - 1 do
-      begin
-        vRect := Rect(y * LLK_TILE_WIDTH, x * LLK_TILE_HEIGHT,  y * LLK_TILE_WIDTH + LLK_TILE_WIDTH, x * LLK_TILE_HEIGHT + LLK_TILE_HEIGHT);
-        FBmpTile.Canvas.CopyRect(Rect(0, 0, LLK_TILE_WIDTH, LLK_TILE_HEIGHT), vBmp.Canvas, vRect);
-
-        FTileTable[x, y].Rect := vRect;
-        FTileTable[x, y].Coord.Col := y;
-        FTileTable[x, y].Coord.Row := x;
-        no := False;
-        uFlag := BmpToFlag(FBmpTile);
-        FTileTable[x, y].Index := CheckTileFlag( uFlag, no);
-        if no then
-        begin
-          FBmpTile.SaveToFile(Format('c:/%d.bmp', [uFlag]));
-        end;
-        if bSave then
-        begin
-          FBmpTile.SaveToFile(Format('c:/%0.2d%0.2d.bmp', [x, y]));
-          vList.Add(Format('%0.2d%0.2d - %d', [x, y, uFlag]));
-        end;
-
-//        FBitmap.Canvas.Draw(y * LLK_TILE_WIDTH, x * LLK_TILE_HEIGHT, bmp0);
-      end;
-    end;
-
-    Image1.Picture.Bitmap := vBmp;
-    if bSave then
-      vList.SaveToFile('c:/xx.txt');
-  finally
-    vList.Free;
-  end;
 end;
 
 function TFrmLlk.GetGameHandle: THandle;
@@ -307,116 +173,56 @@ function TFrmLlk.GetTileToColor(vTarget: TTile): TColor;
     Result := B Shl 16 or G  shl 8 or R;
   end;
 
-var
-  i: Integer;
 begin
-  Result := clBlack;
-  for i := 0 to Length(FArrayTile) - 1 do
-  begin
-    if vTarget.Index = FArrayTile[i] then
-    begin
-      case i of
-        1: Result := RgbToColor(39, 247, 239);
-        2: Result := RgbToColor(39, 215, 31);
-        3: Result := RgbToColor(32, 40, 104);
-        4: Result := RgbToColor(7, 51, 255);
-        5: Result := RgbToColor(215, 87, 247);
-        6: Result := RgbToColor(151, 79, 95);
-        7: Result := clRed;
-        8: Result := clBlue;
-        9: Result := clGreen;
-        10: Result := clAqua;
-        11: Result := clMaroon;
-        12: Result := clSkyBlue;
-        13: Result := clMoneyGreen;
-        14: Result := clTeal;
-        15: Result := clLime;
-        16: Result := clOlive;
-        17: Result := clNavy;
-        18: Result := clPurple;
-        19: Result := clFuchsia;
-        20: Result := clSilver;
-        21: Result := RgbToColor(218, 112, 214);
-        22: Result := RgbToColor(0, 255, 127);
-        23: Result := RgbToColor(244, 164, 96);
-        24: Result := RgbToColor(188, 143, 143);
-        25: Result := RgbToColor(255, 125, 64);
-        26: Result := RgbToColor(156, 102, 31);
-        27: Result := RgbToColor(255, 127, 80);
-        28: Result := RgbToColor(50, 205, 50);
-        29: Result := RgbToColor(189, 252, 201);
-        30: Result := RgbToColor(255, 192, 203);
-        31: Result := RgbToColor(255, 69, 0);
-        32: Result := RgbToColor(255, 99, 71);
-        33: Result := RgbToColor(0, 199, 144);
-        34: Result := RgbToColor(25, 25, 112);
-        35: Result := RgbToColor(51, 161, 201);
-        36: Result := RgbToColor(30, 144, 255);
-        37: Result := RgbToColor(61, 89, 171);
-        38: Result := RgbToColor(173, 48, 96);
-        39: Result := RgbToColor($FF, $45, $00);
-        40: Result := RgbToColor($B2, $22, $22);
-        41: Result := RgbToColor($FF, $7F, $50);
-        42: Result := RgbToColor($6B, $8E, $23);
-        43: Result := RgbToColor($9A, $CD, $32);
-        44: Result := RgbToColor($98, $FB, $98);
-      else
-        Result := clBlack;
-      end;
+  case vTarget.Index of
+    2: Result := RgbToColor(39, 247, 239);
+    3: Result := RgbToColor(39, 215, 31);
+    4: Result := RgbToColor(32, 40, 104);
+    5: Result := RgbToColor(7, 51, 255);
+    6: Result := RgbToColor(215, 87, 247);
+    7: Result := RgbToColor(151, 79, 95);
+    8: Result := clRed;
+    9: Result := clBlue;
+    10: Result := clGreen;
+    11: Result := clAqua;
+    12: Result := clMaroon;
+    13: Result := clSkyBlue;
+    14: Result := clMoneyGreen;
+    15: Result := clTeal;
+    16: Result := clLime;
+    17: Result := clOlive;
+    18: Result := clNavy;
+    19: Result := clPurple;
+    20: Result := clFuchsia;
+    21: Result := clSilver;
+    22: Result := RgbToColor(218, 112, 214);
+    23: Result := RgbToColor(0, 255, 127);
+    24: Result := RgbToColor(244, 164, 96);
+    25: Result := RgbToColor(188, 143, 143);
+    26: Result := RgbToColor(255, 125, 64);
+    27: Result := RgbToColor(156, 102, 31);
+    28: Result := RgbToColor(255, 127, 80);
+    29: Result := RgbToColor(50, 205, 50);
+    30: Result := RgbToColor(189, 252, 201);
+    31: Result := RgbToColor(255, 192, 203);
+    32: Result := RgbToColor(255, 69, 0);
+    33: Result := RgbToColor(255, 99, 71);
+    34: Result := RgbToColor(0, 199, 144);
+    35: Result := RgbToColor(25, 25, 112);
+    36: Result := RgbToColor(51, 161, 201);
+    37: Result := RgbToColor(30, 144, 255);
 
-      Break;
-    end;
+    240: Result := RgbToColor(61, 89, 171);
+    241: Result := RgbToColor(173, 48, 96);
+    242: Result := RgbToColor($FF, $45, $00);
+    243: Result := RgbToColor($B2, $22, $22);
+    244: Result := RgbToColor($FF, $7F, $50);
+    245: Result := RgbToColor($6B, $8E, $23);
+    246: Result := RgbToColor($9A, $CD, $32);
+    247: Result := RgbToColor($98, $FB, $98);
+  else
+    Result := clBlack;
   end;
-
-end;
-
-procedure TFrmLlk.InitTiles;
-begin
-  FArrayTile[0] := LLK_TILE_00;
-  FArrayTile[1] := LLK_TILE_01;
-  FArrayTile[2] := LLK_TILE_02;
-  FArrayTile[3] := LLK_TILE_03;
-  FArrayTile[4] := LLK_TILE_04;
-  FArrayTile[5] := LLK_TILE_05;
-  FArrayTile[6] := LLK_TILE_06;
-  FArrayTile[7] := LLK_TILE_07;
-  FArrayTile[8] := LLK_TILE_08;
-  FArrayTile[9] := LLK_TILE_09;
-  FArrayTile[10] := LLK_TILE_10;
-  FArrayTile[11] := LLK_TILE_11;
-  FArrayTile[12] := LLK_TILE_12;
-  FArrayTile[13] := LLK_TILE_13;
-  FArrayTile[14] := LLK_TILE_14;
-  FArrayTile[15] := LLK_TILE_15;
-  FArrayTile[16] := LLK_TILE_16;
-  FArrayTile[17] := LLK_TILE_17;
-  FArrayTile[18] := LLK_TILE_18;
-  FArrayTile[19] := LLK_TILE_19;
-  FArrayTile[20] := LLK_TILE_20;
-  FArrayTile[21] := LLK_TILE_21;
-  FArrayTile[22] := LLK_TILE_22;
-  FArrayTile[23] := LLK_TILE_23;
-  FArrayTile[24] := LLK_TILE_24;
-  FArrayTile[25] := LLK_TILE_25;
-  FArrayTile[26] := LLK_TILE_26;
-  FArrayTile[27] := LLK_TILE_27;
-  FArrayTile[28] := LLK_TILE_28;
-  FArrayTile[29] := LLK_TILE_29;
-  FArrayTile[30] := LLK_TILE_30;
-  FArrayTile[31] := LLK_TILE_31;
-  FArrayTile[32] := LLK_TILE_32;
-  FArrayTile[33] := LLK_TILE_33;
-  FArrayTile[34] := LLK_TILE_34;
-  FArrayTile[35] := LLK_TILE_35;
-  FArrayTile[36] := LLK_TILE_36;
-  FArrayTile[37] := LLK_TILE_37;
-  FArrayTile[38] := LLK_TILE_38;
-  FArrayTile[39] := LLK_TILE_39;
-  FArrayTile[40] := LLK_TILE_40;
-  FArrayTile[41] := LLK_TILE_41;
-  FArrayTile[42] := LLK_TILE_42;
-  FArrayTile[43] := LLK_TILE_43;
-  FArrayTile[44] := LLK_TILE_44;
 end;
 
 function TFrmLlk.Match: Integer;
@@ -432,6 +238,9 @@ begin
     for y := 0 to LLK_TILE_COL - 1 do
     begin
       vStart := FTileTable[x, y];
+      if vStart.Index = LLK_TILE_EMPTY then
+        Continue;
+
       // 已用的点不检测
       bUsed := False;
       for i := 0 to Length(usedTiles) - 1 do
@@ -500,7 +309,7 @@ end;
 
 procedure TFrmLlk.TimerCheckGameTimer(Sender: TObject);
 begin
-  CheckGameProcess
+  CheckGameProcess();
 end;
 
 procedure TFrmLlk.TimerMatchTimer(Sender: TObject);
@@ -516,6 +325,7 @@ begin
   hWnd := GetGameHandle;
   if (hWnd <> 0) and IsWindow(hWnd) then
   begin
+    Caption := 'LLK (已启动)';
     // 窗口存在
     if FProcHandle = 0 then
     begin
@@ -524,6 +334,7 @@ begin
     end;
   end else
   begin
+    Caption := 'LLK (未开始)';
     // 如果窗口不存在  但
     if FProcHandle > 0 then
     begin
@@ -549,7 +360,7 @@ begin
   // 选中无效  或 不同类型
   imgIdA := Start.Index;
   imgIdB := Target.Index;
-  if (imgIdA = LLK_TILE_00) or (imgIdB = LLK_TILE_00) or (imgIdA <> imgIdB) then
+  if (imgIdA = LLK_TILE_EMPTY) or (imgIdB = LLK_TILE_EMPTY) or (imgIdA <> imgIdB) then
     Exit;
 
   // 判断是否可以消除
@@ -590,7 +401,7 @@ begin
     // 开始点向右
     for i := Start.Coord.Col + 1 to LLK_TILE_COL - 1 do
     begin
-      if GetImgId(Start.Coord.Row, i) = LLK_TILE_00 then
+      if GetImgId(Start.Coord.Row, i) = LLK_TILE_EMPTY then
       begin
         list1.Add(i, Start.Coord.Row);
       end else
@@ -599,7 +410,7 @@ begin
     // 开始点向左
     for i := Start.Coord.Col - 1 downto 0 do
     begin
-      if GetImgId(Start.Coord.Row, i) = LLK_TILE_00 then
+      if GetImgId(Start.Coord.Row, i) = LLK_TILE_EMPTY then
       begin
         list1.Insert(i, Start.Coord.Row);
       end else
@@ -608,7 +419,7 @@ begin
     // 目标点向右
     for i := Target.Coord.Col + 1 to LLK_TILE_COL - 1 do
     begin
-      if GetImgId(Target.Coord.Row, i) = LLK_TILE_00 then
+      if GetImgId(Target.Coord.Row, i) = LLK_TILE_EMPTY then
       begin
         list2.Add(i, Target.Coord.Row);
       end else
@@ -617,7 +428,7 @@ begin
     // 目标点向左
     for i := Target.Coord.Col - 1 downto 0 do
     begin
-      if GetImgId(Target.Coord.Row, i) = LLK_TILE_00 then
+      if GetImgId(Target.Coord.Row, i) = LLK_TILE_EMPTY then
       begin
         list2.Insert(i, Target.Coord.Row);
       end else
@@ -643,7 +454,7 @@ begin
     // 开始点向下
     for i := Start.Coord.Row + 1 to LLK_TILE_ROW - 1 do
     begin
-      if GetImgId(i, Start.Coord.Col) = LLK_TILE_00 then
+      if GetImgId(i, Start.Coord.Col) = LLK_TILE_EMPTY then
       begin
         list3.Add(Start.Coord.Col, i);
       end else
@@ -652,7 +463,7 @@ begin
     // 开始点向上
     for i := Start.Coord.Row - 1 downto 0 do
     begin
-      if GetImgId(i, Start.Coord.Col) = LLK_TILE_00 then
+      if GetImgId(i, Start.Coord.Col) = LLK_TILE_EMPTY then
       begin
         list3.Insert(Start.Coord.Col, i);
       end else
@@ -661,7 +472,7 @@ begin
     // 目标点向下
     for i := Target.Coord.Row + 1 to LLK_TILE_ROW - 1 do
     begin
-      if GetImgId(i, Target.Coord.Col) = LLK_TILE_00 then
+      if GetImgId(i, Target.Coord.Col) = LLK_TILE_EMPTY then
       begin
         list4.Add(Target.Coord.Col, i);
       end else
@@ -670,7 +481,7 @@ begin
     // 目标点向下上
     for i := Target.Coord.Row - 1 downto 0 do
     begin
-      if GetImgId(i, Target.Coord.Col) = LLK_TILE_00 then
+      if GetImgId(i, Target.Coord.Col) = LLK_TILE_EMPTY then
       begin
         list4.Insert(Target.Coord.Col, i);
       end else
@@ -758,7 +569,7 @@ begin
         x := list5.GetCol(i);
         for j := a to b do
         begin
-          if GetImgId(j, x) <> LLK_TILE_00 then
+          if GetImgId(j, x) <> LLK_TILE_EMPTY then
           begin
             bCheck := True;   // 说明中间有障碍
             Break;
@@ -804,7 +615,7 @@ begin
       x := list5.GetRow(i);
       for j := a to b do
       begin
-        if GetImgId(x, j) <> LLK_TILE_00 then
+        if GetImgId(x, j) <> LLK_TILE_EMPTY then
         begin
           bCheck := True;   // 说明中间有障碍
           Break;
@@ -825,23 +636,6 @@ begin
     list4.Free;
     list5.Free;
     list6.Free;
-  end;
-end;
-
-function TFrmLlk.CheckTileFlag(uFlag: Integer; var no: Boolean): Integer;
-var
-  i: Integer;
-begin
-  Result := LLK_TILE_00;
-  no := True;
-  for i := 0 to Length(FArrayTile) - 1 do
-  begin
-    if FArrayTile[i] = uFlag then
-    begin
-      no := False;
-      Result := uFlag;
-      Exit;
-    end;
   end;
 end;
 

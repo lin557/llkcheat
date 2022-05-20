@@ -50,7 +50,7 @@ object FrmLlk: TFrmLlk
     BevelOuter = bvNone
     TabOrder = 1
     object LblMatch: TLabel
-      Left = 179
+      Left = 89
       Top = 9
       Width = 87
       Height = 18
@@ -71,45 +71,17 @@ object FrmLlk: TFrmLlk
       TabOrder = 0
       OnClick = BtnPlayClick
     end
-    object BtnAnalyse: TButton
-      Left = 345
-      Top = 5
-      Width = 75
-      Height = 25
-      Caption = #20998#26512
-      TabOrder = 1
-      OnClick = BtnAnalyseClick
-    end
-    object BtnMatch: TButton
-      Left = 426
-      Top = 5
-      Width = 75
-      Height = 25
-      Caption = #21015#34920
-      TabOrder = 2
-      OnClick = BtnMatchClick
-    end
     object BtnSnap: TButton
       Left = 507
       Top = 5
       Width = 75
       Height = 25
       Caption = #25235#22270
-      TabOrder = 3
+      TabOrder = 1
       OnClick = BtnSnapClick
-    end
-    object Button1: TButton
-      Left = 112
-      Top = 5
-      Width = 75
-      Height = 25
-      Caption = 'Button1'
-      TabOrder = 4
-      OnClick = Button1Click
     end
   end
   object TimerMatch: TTimer
-    Enabled = False
     Interval = 50
     OnTimer = TimerMatchTimer
     Left = 131
