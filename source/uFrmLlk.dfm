@@ -1,10 +1,10 @@
-object FrmLlk: TFrmLlk
+object FrmQqGame: TFrmQqGame
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'LLK'
-  ClientHeight = 439
+  Caption = 'QQ Game Cheat'
+  ClientHeight = 436
   ClientWidth = 599
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -17,80 +17,95 @@ object FrmLlk: TFrmLlk
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object PnlMain: TPanel
-    AlignWithMargins = True
-    Left = 3
-    Top = 47
-    Width = 593
-    Height = 389
+  object CardPanel: TCardPanel
+    Left = 0
+    Top = 0
+    Width = 599
+    Height = 436
     Align = alClient
-    BevelKind = bkFlat
+    ActiveCard = CardLlk
     BevelOuter = bvNone
+    Caption = 'CardPanel'
     TabOrder = 0
-    object Image1: TImage
+    ExplicitLeft = 128
+    ExplicitTop = 56
+    ExplicitWidth = 300
+    ExplicitHeight = 200
+    object CardLlk: TCard
       Left = 0
       Top = 0
-      Width = 589
-      Height = 385
-      Align = alClient
-      ExplicitLeft = 8
-      ExplicitTop = 240
-      ExplicitWidth = 105
-      ExplicitHeight = 105
-    end
-  end
-  object PnlTop: TPanel
-    AlignWithMargins = True
-    Left = 3
-    Top = 3
-    Width = 593
-    Height = 38
-    Align = alTop
-    BevelKind = bkFlat
-    BevelOuter = bvNone
-    TabOrder = 1
-    object LblMatch: TLabel
-      Left = 89
-      Top = 9
-      Width = 87
-      Height = 18
-      Caption = 'Match = 0'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clRed
-      Font.Height = -16
-      Font.Name = 'Verdana'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object BtnPlay: TButton
-      Left = 8
-      Top = 5
-      Width = 75
-      Height = 25
-      Caption = #24320#22987
+      Width = 599
+      Height = 436
+      Caption = #36830#36830#30475
+      CardIndex = 0
       TabOrder = 0
-      OnClick = BtnPlayClick
+      ExplicitLeft = 1
+      ExplicitTop = 1
+      ExplicitWidth = 298
+      ExplicitHeight = 198
+      object PnlTopLlk: TPanel
+        AlignWithMargins = True
+        Left = 3
+        Top = 3
+        Width = 593
+        Height = 35
+        Align = alTop
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        TabOrder = 0
+        object LblMatch: TLabel
+          Left = 0
+          Top = 0
+          Width = 589
+          Height = 31
+          Align = alClient
+          Alignment = taCenter
+          Caption = 'Match = 0'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clRed
+          Font.Height = -16
+          Font.Name = 'Verdana'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Layout = tlCenter
+          ExplicitHeight = 33
+        end
+      end
+      object PnlMainLlk: TPanel
+        AlignWithMargins = True
+        Left = 3
+        Top = 44
+        Width = 593
+        Height = 389
+        Align = alClient
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        TabOrder = 1
+        ExplicitTop = 3
+        ExplicitWidth = 579
+        ExplicitHeight = 395
+        object ImgLlk: TImage
+          Left = 0
+          Top = 0
+          Width = 589
+          Height = 385
+          Align = alClient
+          ExplicitLeft = 8
+          ExplicitTop = 240
+          ExplicitWidth = 105
+          ExplicitHeight = 105
+        end
+      end
     end
-    object BtnSnap: TButton
-      Left = 507
-      Top = 5
-      Width = 75
-      Height = 25
-      Caption = #25235#22270
+    object CardMnzc: TCard
+      Left = 0
+      Top = 0
+      Width = 599
+      Height = 436
+      Caption = #32654#22899#25214#33580
+      CardIndex = 1
       TabOrder = 1
-      OnClick = BtnSnapClick
+      ExplicitHeight = 439
     end
-  end
-  object TimerMatch: TTimer
-    Interval = 50
-    OnTimer = TimerMatchTimer
-    Left = 131
-    Top = 215
-  end
-  object TimerCheckGame: TTimer
-    Interval = 300
-    OnTimer = TimerCheckGameTimer
-    Left = 235
-    Top = 215
   end
 end
