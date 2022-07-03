@@ -1,0 +1,474 @@
+# 定义变量
+v $smallDelay=40 $chaiLiaoX=411 $speed=351 $fast=1 $keyOn=107 $keyOff=96
+i $0=0 $chaiLiaoX=410 $speed=300
+i $0=1 $chaiLiaoX=507 $speed=750
+i $0=2 $chaiLiaoX=595 $speed=1850
+i $0=3 $chaiLiaoX=688 $speed=2750
+i $0=4 $chaiLiaoX=773 $speed=3750
+i $0=5 $chaiLiaoX=860 $speed=7450
+i $0=6 $chaiLiaoX=955 $speed=14750
+# 非加速 只允许小麦 120 秒
+i $1=0 $fast=0 $chaiLiaoX=410 $speed=120000 $keyOn=0 $keyOff=0
+# 第1行第1个按下
+m m 180 436
+s $smallDelay
+m c 0
+s 165
+# 小麦: 410 727 玉米: 507 727 萝卜: 595 727 甘蔗: 688 727 棉花: 773 727
+m m $chaiLiaoX 727
+s 165
+# 按下
+m d 0
+s 100
+m m 135 470
+s $smallDelay
+# 第一行第1个 从左到右
+m m 182 430
+s $smallDelay
+m m 241 403
+s $smallDelay
+m m 299 375
+s $smallDelay
+m m 354 352
+s $smallDelay
+m m 412 325
+s $smallDelay
+m m 473 297
+s $smallDelay
+m m 526 267
+s $smallDelay
+m m 585 239
+s $smallDelay
+m m 643 208
+s $smallDelay
+# 第一行第10个
+m m 702 180
+# 第二行第10个
+s $smallDelay
+m m 757 208
+s $smallDelay
+m m 701 238
+s $smallDelay
+m m 643 265
+s $smallDelay
+m m 583 297
+s $smallDelay
+m m 528 322
+s $smallDelay
+m m 470 353
+s $smallDelay
+m m 411 382
+s $smallDelay
+m m 353 409
+s $smallDelay
+m m 528 322
+s $smallDelay
+m m 294 440
+s $smallDelay
+m m 237 466
+s $smallDelay
+# 第三行第1个
+m m 297 498
+s $smallDelay
+m m 352 466
+s $smallDelay
+m m 412 437
+s $smallDelay
+m m 471 409
+s $smallDelay
+m m 525 380
+s $smallDelay
+m m 584 350
+s $smallDelay
+m m 642 320
+s $smallDelay
+m m 700 292
+s $smallDelay
+m m 759 263
+s $smallDelay
+m m 815 234
+s $smallDelay
+# 第4行第10个
+m m 874 263
+s $smallDelay
+m m 816 293
+s $smallDelay
+m m 758 322
+s $smallDelay
+m m 700 351
+s $smallDelay
+m m 640 377
+s $smallDelay
+m m 586 407
+s $smallDelay
+m m 530 435
+s $smallDelay
+m m 467 464
+s $smallDelay
+m m 411 493
+s $smallDelay
+m m 357 522
+s $smallDelay
+# 第5行第1个
+m m 413 554
+s $smallDelay
+m m 469 524
+s $smallDelay
+m m 525 493
+s $smallDelay
+m m 586 464
+s $smallDelay
+m m 413 554
+s $smallDelay
+m m 643 434
+s $smallDelay
+m m 700 409
+s $smallDelay
+m m 756 379
+s $smallDelay
+m m 816 351
+s $smallDelay
+m m 872 322
+s $smallDelay
+m m 928 290
+s $smallDelay
+# 第6行第10个
+m m 987 321
+s $smallDelay
+m m 932 350
+s $smallDelay
+m m 872 379
+s $smallDelay
+m m 815 407
+s $smallDelay
+m m 757 437
+s $smallDelay
+m m 700 465
+s $smallDelay
+m m 640 493
+s $smallDelay
+m m 584 524
+s $smallDelay
+m m 526 550
+s $smallDelay
+m m 460 580
+s $smallDelay
+# 第7行第1个
+m m 528 611
+s $smallDelay
+m m 586 582
+s $smallDelay
+m m 642 551
+s $smallDelay
+m m 700 521
+s $smallDelay
+m m 756 493
+s $smallDelay
+m m 816 466
+s $smallDelay
+m m 873 436
+s $smallDelay
+m m 931 408
+s $smallDelay
+m m 989 379
+s $smallDelay
+# 第7行第10个
+m m 1046 351
+s $smallDelay
+# 第8行第10个
+m m 1105 382
+s $smallDelay
+m m 1046 414
+s $smallDelay
+m m 989 441
+s $smallDelay
+m m 931 468
+s $smallDelay
+m m 875 496
+s $smallDelay
+m m 817 527
+s $smallDelay
+m m 759 554
+s $smallDelay
+m m 700 584
+s $smallDelay
+m m 643 612
+s $smallDelay
+m m 586 640
+s $smallDelay
+# 第9行第1个
+m m 642 667
+s $smallDelay
+m m 696 638
+s $smallDelay
+m m 756 608
+s $smallDelay
+m m 815 580
+s $smallDelay
+m m 872 552
+s $smallDelay
+m m 931 524
+s $smallDelay
+m m 988 494
+s $smallDelay
+m m 1045 465
+s $smallDelay
+m m 1105 436
+s $smallDelay
+m m 1161 407
+s $smallDelay
+# 弹起
+m u 0
+s 65
+# 完成 等收成 开加速 -------------------------------
+k p $keyOn
+s 100
+k p $keyOn
+# 小麦: 300 玉米 800 萝卜: 1800 甘蔗: 2800
+s $speed
+k p $keyOff
+s 250
+k p $keyOff
+s 250
+k p $keyOff
+s 250
+# 收成 移第1行第1个按下
+m m 182 430
+s 65
+m c 0
+s 100
+m m 694 724
+s 160
+# 按下
+m d 0
+s $smallDelay
+# 空白起点
+m m 120 470
+s $smallDelay
+# 第一行第1个 从左到右
+m m 182 430
+s $smallDelay
+m m 241 403
+s $smallDelay
+m m 299 375
+s $smallDelay
+m m 354 352
+s $smallDelay
+m m 412 325
+s $smallDelay
+m m 473 297
+s $smallDelay
+m m 526 267
+s $smallDelay
+m m 585 239
+s $smallDelay
+m m 643 208
+s $smallDelay
+# 第一行第10个
+m m 702 180
+# 第二行第10个
+s $smallDelay
+m m 757 208
+s $smallDelay
+m m 701 238
+s $smallDelay
+m m 643 265
+s $smallDelay
+m m 583 297
+s $smallDelay
+m m 528 322
+s $smallDelay
+m m 470 353
+s $smallDelay
+m m 411 382
+s $smallDelay
+m m 353 409
+s $smallDelay
+m m 528 322
+s $smallDelay
+m m 294 440
+s $smallDelay
+m m 237 466
+s $smallDelay
+# 第三行第1个
+m m 297 498
+s $smallDelay
+m m 352 466
+s $smallDelay
+m m 412 437
+s $smallDelay
+m m 471 409
+s $smallDelay
+m m 525 380
+s $smallDelay
+m m 584 350
+s $smallDelay
+m m 642 320
+s $smallDelay
+m m 700 292
+s $smallDelay
+m m 759 263
+s $smallDelay
+m m 815 234
+s $smallDelay
+# 第4行第10个
+m m 874 263
+s $smallDelay
+m m 816 293
+s $smallDelay
+m m 758 322
+s $smallDelay
+m m 700 351
+s $smallDelay
+m m 640 377
+s $smallDelay
+m m 586 407
+s $smallDelay
+m m 530 435
+s $smallDelay
+m m 467 464
+s $smallDelay
+m m 411 493
+s $smallDelay
+m m 357 522
+s $smallDelay
+# 第5行第1个
+m m 413 554
+s $smallDelay
+m m 469 524
+s $smallDelay
+m m 525 493
+s $smallDelay
+m m 586 464
+s $smallDelay
+m m 413 554
+s $smallDelay
+m m 643 434
+s $smallDelay
+m m 700 409
+s $smallDelay
+m m 756 379
+s $smallDelay
+m m 816 351
+s $smallDelay
+m m 872 322
+s $smallDelay
+m m 928 290
+s $smallDelay
+# 第6行第10个
+m m 987 321
+s $smallDelay
+m m 932 350
+s $smallDelay
+m m 872 379
+s $smallDelay
+m m 815 407
+s $smallDelay
+m m 757 437
+s $smallDelay
+m m 700 465
+s $smallDelay
+m m 640 493
+s $smallDelay
+m m 584 524
+s $smallDelay
+m m 526 550
+s $smallDelay
+m m 460 580
+s $smallDelay
+# 第7行第1个
+m m 528 611
+s $smallDelay
+m m 586 582
+s $smallDelay
+m m 642 551
+s $smallDelay
+m m 700 521
+s $smallDelay
+m m 756 493
+s $smallDelay
+m m 816 466
+s $smallDelay
+m m 873 436
+s $smallDelay
+m m 931 408
+s $smallDelay
+m m 989 379
+s $smallDelay
+# 第7行第10个
+m m 1046 351
+s $smallDelay
+# 第8行第10个
+m m 1105 382
+s $smallDelay
+m m 1046 414
+s $smallDelay
+m m 989 441
+s $smallDelay
+m m 931 468
+s $smallDelay
+m m 875 496
+s $smallDelay
+m m 817 527
+s $smallDelay
+m m 759 554
+s $smallDelay
+m m 700 584
+s $smallDelay
+m m 643 612
+s $smallDelay
+m m 586 640
+s $smallDelay
+# 第9行第1个
+m m 642 667
+s $smallDelay
+m m 696 638
+s $smallDelay
+m m 756 608
+s $smallDelay
+m m 815 580
+s $smallDelay
+m m 872 552
+s $smallDelay
+m m 931 524
+s $smallDelay
+m m 988 494
+s $smallDelay
+m m 1045 465
+s $smallDelay
+m m 1105 436
+s $smallDelay
+m m 1161 407
+s $smallDelay
+# 弹起
+m u 0
+s $smallDelay
+# 收成结束 移到仓库
+m m 940 155
+s 65
+m c 0
+s 280
+# 移到第一格 有黄金卷 410 没有 343
+m m 365 410
+s 360
+m c 0
+s 150
+# 移到 加号 有黄金卷 512 没有 230
+m m 490 230
+s 300
+# 按下
+m d 0
+# 70个=3600 80=3750 90=3900
+s 3900
+m u 0
+s $smallDelay
+# 移到出售按钮 612 335
+m m 360 335
+s 65
+m c 0
+s 150
+m m 1055 143
+s 165
+# 关窗口 结束
+m c 0
+s 500

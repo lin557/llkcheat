@@ -100,13 +100,17 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="source\uFrmLlk.pas">
-            <Form>FrmQqGame</Form>
+        <DCCReference Include="source\uFrmCheat.pas">
+            <Form>FrmCheat</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="source\uGameLlk.pas"/>
+        <DCCReference Include="source\uGameKyordai.pas"/>
         <DCCReference Include="source\uGameMnzc.pas"/>
         <DCCReference Include="source\uGameDzlzc.pas"/>
+        <DCCReference Include="source\uGameTownship.pas"/>
+        <DCCReference Include="source\uMMTimer.pas"/>
+        <DCCReference Include="source\uIOCPTimer.pas"/>
+        <DCCReference Include="source\uScriptEngine.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -942,9 +946,9 @@
                 </DeployClass>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>

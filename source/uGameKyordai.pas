@@ -1,4 +1,5 @@
-unit uGameLlk;
+{ QQ连连看 }
+unit uGameKyordai;
 
 interface
 
@@ -81,7 +82,7 @@ type
 
   TMatchEvent = procedure(Sender: TObject; vBitmap: TBitmap; uMatch: Integer) of object;
 
-  TGameLlk = class(TObject)
+  TGameKyordai = class(TObject)
   private
     FTimerMatch: TTimer;
     FTimerCheck: TTimer;
@@ -97,7 +98,7 @@ type
     function CheckPath(Start, Target: TTile): Boolean;
     function FindTarget(vStart: TTile; var vTarget: TTile): Boolean;
     procedure GetGameData();
-    function GetGameHandle(): THandle;
+
     procedure CheckGameProcess();
     function GetImgId(vRow, vCol: Integer): Integer;
     function GetTileToColor(vTarget: TTile): TColor;
@@ -107,6 +108,7 @@ type
     constructor Create();
     destructor Destroy; override;
 
+    function GetGameHandle(): THandle;
     procedure Snap;
 
     property OnMatch: TMatchEvent read FOnMatch write FOnMatch;
@@ -290,9 +292,9 @@ begin
   FList_1[Index] := Pointer(Z);
 end;
 
-{ TGameLlk }
+{ TGameKyordai }
 
-procedure TGameLlk.CheckGameProcess;
+procedure TGameKyordai.CheckGameProcess;
 var
   hWnd: THandle;
   pid: Cardinal;
@@ -321,7 +323,7 @@ begin
   end;
 end;
 
-function TGameLlk.CheckPath(Start, Target: TTile): Boolean;
+function TGameKyordai.CheckPath(Start, Target: TTile): Boolean;
 var
   a, b, x, i, j: Integer;
   imgIdA, imgIdB: Integer;
@@ -615,7 +617,7 @@ begin
   end;
 end;
 
-constructor TGameLlk.Create;
+constructor TGameKyordai.Create;
 begin
   FTimerMatch := TTimer.Create(nil);
   FTimerMatch.Interval := 85;
@@ -637,7 +639,7 @@ begin
   FBitmap.Canvas.Brush.Style := bsBDiagonal;
 end;
 
-destructor TGameLlk.Destroy;
+destructor TGameKyordai.Destroy;
 begin
   FTimerMatch.Free;
   FTimerCheck.Free;
@@ -647,7 +649,7 @@ begin
   inherited;
 end;
 
-function TGameLlk.FindTarget(vStart: TTile; var vTarget: TTile): Boolean;
+function TGameKyordai.FindTarget(vStart: TTile; var vTarget: TTile): Boolean;
 var
   x, y: Integer;
 begin
@@ -669,7 +671,7 @@ begin
   end;
 end;
 
-procedure TGameLlk.GetGameData;
+procedure TGameKyordai.GetGameData;
 var
   hWnd: Winapi.Windows.HWND;
   hDc: Winapi.Windows.HDC;
@@ -691,17 +693,17 @@ begin
   GetTiles(FProcHandle, FTileTable);
 end;
 
-function TGameLlk.GetGameHandle: THandle;
+function TGameKyordai.GetGameHandle: THandle;
 begin
   Result := FindWindow(nil, 'QQ游戏 - 连连看角色版');
 end;
 
-function TGameLlk.GetImgId(vRow, vCol: Integer): Integer;
+function TGameKyordai.GetImgId(vRow, vCol: Integer): Integer;
 begin
   Result := FTileTable[vRow, vCol].Index;
 end;
 
-function TGameLlk.GetTileToColor(vTarget: TTile): TColor;
+function TGameKyordai.GetTileToColor(vTarget: TTile): TColor;
 
   function RgbToColor(R,G,B: byte): TColor;
   begin
@@ -760,7 +762,7 @@ begin
   end;
 end;
 
-function TGameLlk.Match: Integer;
+function TGameKyordai.Match: Integer;
 var
   x, y, i, c: Integer;
   vStart, vTarget: TTile;
@@ -844,7 +846,7 @@ begin
   Result := c;
 end;
 
-procedure TGameLlk.Snap;
+procedure TGameKyordai.Snap;
 var
   hWnd: Winapi.Windows.HWND;
   hDc: Winapi.Windows.HDC;
@@ -880,12 +882,12 @@ begin
   end;
 end;
 
-procedure TGameLlk.TimerCheckTimer(Sender: TObject);
+procedure TGameKyordai.TimerCheckTimer(Sender: TObject);
 begin
   CheckGameProcess();
 end;
 
-procedure TGameLlk.TimerMatchTimer(Sender: TObject);
+procedure TGameKyordai.TimerMatchTimer(Sender: TObject);
 var
   c: Integer;
 begin
